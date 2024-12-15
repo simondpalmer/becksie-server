@@ -7,6 +7,7 @@ The handler must be called with --rp_debugger flag to enable it.
 """
 import base64
 import tempfile
+import os
 
 from rp_schema import INPUT_VALIDATIONS
 from runpod.serverless.utils import download_files_from_urls, rp_cleanup, rp_debugger
@@ -14,8 +15,12 @@ from runpod.serverless.utils.rp_validator import validate
 import runpod
 import predict
 
+# Load paths at initialization
+vad_model_path = os.path.join("/models", "vad_multilingual_marblenet.nemo")
+speaker_model_path = os.path.join("/models", "titanet-l.nemo")
 
-MODEL = predict.Predictor()
+
+MODEL = predict.Predictor(vad_model_path, speaker_model_path)
 MODEL.setup()
 
 

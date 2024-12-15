@@ -7,11 +7,18 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-numpy = "^2.2.0"
 locust = "^2.32.4"
 faster-whisper = "^1.1.0"
 runpod = "1.7.0"
 pydub = "^0.25.1"
+ctranslate2 = "4.4.0"
+numba = "~0.56.0"
+texterrors = "0.5.1"
+nemo-toolkit = {version = ">=2.dev", extras = ["asr"]}
+demucs = {git = "https://github.com/MahmoudAshraf97/demucs.git"}
+deepmultilingualpunctuation = {git = "https://github.com/oliverguhr/deepmultilingualpunctuation.git"}
+ctc-forced-aligner = {git = "https://github.com/MahmoudAshraf97/ctc-forced-aligner.git"}
+perl = "^1.0.0"
 
 
 [build-system]
