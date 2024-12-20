@@ -1,7 +1,7 @@
 # Use specific version of nvidia cuda image
 FROM nvidia/cuda:11.7.1-cudnn8-runtime-ubuntu20.04
 
-# Remove any third-party apt sources to avoid issues with expiring keys.
+# Remove any third-party apt sources to avoid issues with expiring keys
 RUN rm -f /etc/apt/sources.list.d/*.list
 
 # Set shell and noninteractive environment variables
@@ -12,10 +12,11 @@ ENV SHELL=/bin/bash
 # Set working directory
 WORKDIR /
 
-# Update and upgrade the system packages (Worker Template)
+# Update and upgrade the system packages
 RUN apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get install --yes --no-install-recommends sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential -y &&\
+    apt-get install --yes --no-install-recommends \
+    sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential gpg && \
     apt-get autoremove -y && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
@@ -35,13 +36,22 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
+# Set up NVIDIA repository
+RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey -o /tmp/nvidia-gpgkey && \
+    gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg /tmp/nvidia-gpgkey && \
+    curl -s -L https://nvidia.github.io/libnvidia-container/stable/deb/nvidia-container-toolkit.list -o /tmp/nvidia-list && \
+    sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' /tmp/nvidia-list > /etc/apt/sources.list.d/nvidia-container-toolkit.list && \
+    apt-get update && \
+    apt-get install -y nvidia-container-toolkit && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+
 # Upgrade pip, setuptools, and wheel
 RUN python3 -m pip install --upgrade pip setuptools wheel
 
-# Install Python dependencies (Worker Template)
+# Install Python dependencies
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install --upgrade pip && \
     pip install -r /requirements.txt --no-cache-dir && \
     rm /requirements.txt
 
