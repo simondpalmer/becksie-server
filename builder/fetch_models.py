@@ -17,9 +17,10 @@ from ctc_forced_aligner import (
 )
 import torch
 
+compute_type = "float32"
 # compute_type = "float16"
 # or run on GPU with INT8
-compute_type = "int8_float16"
+# compute_type = "int8_float16"
 # or run on CPU with INT8
 # compute_type = "int8"
 device = "cuda" if rp_cuda.is_available() else "cpu"
