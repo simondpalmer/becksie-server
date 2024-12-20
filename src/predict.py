@@ -46,7 +46,8 @@ from utils import (
     punct_model_langs,
     get_realigned_ws_mapping_with_punctuation,
     get_sentences_speaker_mapping,
-    get_speaker_aware_transcript
+    get_speaker_aware_transcript,
+    get_transcript
 )
 
 
@@ -75,11 +76,7 @@ class Predictor:
         pretrained_vad = "vad_multilingual_marblenet"
         pretrained_speaker_model = "titanet_large"
 
-        # Update the config with model paths
-        # config.diarizer.speaker_embeddings.model_path = self.speaker_model_path
-        # config.diarizer.vad.model_path = self.vad_model_path
-        config.diarizer.speaker_embeddings.model_path = pretrained_speaker_model
-        config.diarizer.vad.model_path = pretrained_vad
+        config.num_workers = 0
 
         # Prepare input manifest for a specific audio file
         meta = {
@@ -88,7 +85,7 @@ class Predictor:
             "duration": None,
             "label": "infer",
             "text": "-",
-            "rttm_filepath": None,
+            "rttm_filepath": os.path.join(temp_path, "pred_rttms", "mono_file.rttm"),
             "uem_filepath": None,
         }
         with open(os.path.join(data_dir, "input_manifest.json"), "w") as fp:
@@ -98,6 +95,21 @@ class Predictor:
         config_file = os.path.join(data_dir, "input_manifest.json")
         config.diarizer.manifest_filepath = config_file
         config.diarizer.out_dir = data_dir
+
+        config.diarizer.speaker_embeddings.model_path = pretrained_speaker_model
+        config.diarizer.oracle_vad = (
+            False  # compute VAD provided with model_path to vad config
+        )
+        config.diarizer.clustering.parameters.oracle_num_speakers = False
+
+        # Here, we use our in-house pretrained NeMo VAD model
+        config.diarizer.vad.model_path = pretrained_vad
+        config.diarizer.vad.parameters.onset = 0.8
+        config.diarizer.vad.parameters.offset = 0.6
+        config.diarizer.vad.parameters.pad_offset = -0.05
+        config.diarizer.msdd_model.model_path = (
+            "diar_msdd_telephonic"  # Telephonic speaker diarization model
+        )
         
         return config
 
@@ -250,9 +262,7 @@ class Predictor:
         
         # Speaker Diarization using NeMo MSDD Model
         msdd_model = NeuralDiarizer(cfg=self.create_diarizer_config(temp_dir)).to(device)
-        # Example if using DataLoader:
-        if hasattr(msdd_model, 'data_loader'):
-            msdd_model.data_loader.num_workers = 0
+        
         msdd_model.diarize()
 
         del msdd_model
@@ -260,7 +270,7 @@ class Predictor:
 
         # Mapping Speakers to Sentences According to Timestamps
         speaker_ts = []
-        with open(os.path.join(temp_dir, "pred_rttms", "mono_file.rttm"), "r") as f:
+        with open(os.path.join(temp_dir, "data", "pred_rttms", "mono_file.rttm"), "r") as f:
             lines = f.readlines()
             for line in lines:
                 line_list = line.split(" ")
@@ -304,17 +314,17 @@ class Predictor:
 
         wsm = get_realigned_ws_mapping_with_punctuation(wsm)
         ssm = get_sentences_speaker_mapping(wsm, speaker_ts)
-        
-        get_speaker_aware_transcript(ssm, f)
-        transcription = segments = list(segments)
+        # with open(os.path.join(temp_dir, "data", "transcript.txt"), "w", encoding="utf-8-sig") as f:
+        #     get_speaker_aware_transcript(ssm, f)
 
+            
+        with open(os.path.join(temp_dir, "data", "transcript.txt"), "w", encoding="utf-8-sig") as srt:
+            transcription = get_transcript(ssm, srt)   
         # transcription = format_segments(transcription, segments)
 
         results = {
-            "segments": serialize_segments(segments),
             "detected_language": info.language,
             "transcription": transcription,
-            "translation":  None,
             "device": device,
             "model": model_name,
         }
@@ -334,19 +344,19 @@ class Predictor:
         return results
 
 
-def serialize_segments(transcript):
-    '''
-    Serialize the segments to be returned in the API response.
-    '''
-    return [{
-        "id": segment.id,
-        "seek": segment.seek,
-        "start": segment.start,
-        "end": segment.end,
-        "text": segment.text,
-        "tokens": segment.tokens,
-        "temperature": segment.temperature,
-        "avg_logprob": segment.avg_logprob,
-        "compression_ratio": segment.compression_ratio,
-        "no_speech_prob": segment.no_speech_prob
-    } for segment in transcript]
+# def serialize_segments(transcript):
+#     '''
+#     Serialize the segments to be returned in the API response.
+#     '''
+#     return [{
+#         "id": segment.id,
+#         "seek": segment.seek,
+#         "start": segment.start,
+#         "end": segment.end,
+#         "text": segment.text,
+#         "tokens": segment.tokens,
+#         "temperature": segment.temperature,
+#         "avg_logprob": segment.avg_logprob,
+#         "compression_ratio": segment.compression_ratio,
+#         "no_speech_prob": segment.no_speech_prob
+#     } for segment in transcript]

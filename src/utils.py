@@ -510,7 +510,7 @@ def format_timestamp(
     )
 
 
-def write_srt(transcript, file):
+def get_transcript(transcript, file):
     """
     Write a transcript to a file in SRT format.
 

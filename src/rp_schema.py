@@ -1,4 +1,14 @@
 INPUT_VALIDATIONS = {
+    'status': {
+        'type': str,
+        'required': False,
+        'default': None
+    },
+    'enroll': {
+        'type': str,
+        'required': False,
+        'default': None
+    },
     'audio': {
         'type': str,
         'required': False,
