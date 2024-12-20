@@ -35,6 +35,9 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
+# Upgrade pip, setuptools, and wheel
+RUN python3 -m pip install --upgrade pip setuptools wheel
+
 # Install Python dependencies (Worker Template)
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
