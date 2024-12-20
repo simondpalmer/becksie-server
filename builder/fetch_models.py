@@ -37,16 +37,16 @@ def download_model(model_name, url):
         wget.download(url, model_path)
     return model_path
 
-def load_diarizer_models():
-    # URLs for downloading the models
-    vad_model_url = "https://api.ngc.nvidia.com/v2/models/org/nvidia/team/nemo/vad_multilingual_marblenet/1.10.0/files?redirect=true&path=vad_multilingual_marblenet.nemo"
-    speaker_model_url = "https://api.ngc.nvidia.com/v2/models/org/nvidia/team/nemo/titanet_large/v1/files?redirect=true&path=titanet-l.nemo"
+# def load_diarizer_models():
+#     # URLs for downloading the models
+#     vad_model_url = "https://api.ngc.nvidia.com/v2/models/org/nvidia/team/nemo/vad_multilingual_marblenet/1.10.0/files?redirect=true&path=vad_multilingual_marblenet.nemo"
+#     speaker_model_url = "https://api.ngc.nvidia.com/v2/models/org/nvidia/team/nemo/titanet_large/v1/files?redirect=true&path=titanet-l.nemo"
 
-    # Download and cache models
-    vad_model_path = download_model("vad_multilingual_marblenet.nemo", vad_model_url)
-    speaker_model_path = download_model("titanet-l.nemo", speaker_model_url)
+#     # Download and cache models
+#     vad_model_path = download_model("vad_multilingual_marblenet.nemo", vad_model_url)
+#     speaker_model_path = download_model("titanet-l.nemo", speaker_model_url)
 
-    return vad_model_path, speaker_model_path
+#     return vad_model_path, speaker_model_path
 
 def load_whisper_model(selected_model):
     """
