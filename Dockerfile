@@ -34,16 +34,6 @@ RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py && \
     rm get-pip.py
 
-# # Set up NVIDIA repository
-# RUN curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey | gpg --dearmor -o /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg && \
-#     curl -s -L https://nvidia.github.io/libnvidia-container/stable/ubuntu20.04/$(dpkg --print-architecture)/nvidia-container-toolkit.list | \
-#     sed 's#deb https://#deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://#g' | \
-#     tee /etc/apt/sources.list.d/nvidia-container-toolkit.list && \
-#     apt-get update && \
-#     apt-get install -y nvidia-container-toolkit && \
-#     apt-get clean -y && \
-#     rm -rf /var/lib/apt/lists/*
-
 # Ensure NVIDIA runtime is available if the base image does not have it
 RUN ln -s /usr/local/cuda/bin/nvidia-smi /usr/bin/nvidia-smi
 
@@ -53,7 +43,7 @@ RUN python3 -m pip install --upgrade pip setuptools wheel
 # Install Python dependencies
 COPY builder/requirements.txt /requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r /requirements.txt --no-cache-dir && \
+    pip install --upgrade --ignore-installed -r /requirements.txt --no-cache-dir && \
     rm /requirements.txt
 
 # Copy and run script to fetch models
