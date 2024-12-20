@@ -79,25 +79,25 @@ def load_alignment_model_wrapper():
     )
     return "alignment_model", (alignment_model, alignment_tokenizer)
 
-def create_diarizer_config(output_dir, vad_model_path, speaker_model_path):
-    # Load YAML Diarizer Configuration
-    DOMAIN_TYPE = "telephonic"
-    CONFIG_FILE_NAME = f"diar_infer_{DOMAIN_TYPE}.yaml"
-    CONFIG_URL = f"https://raw.githubusercontent.com/NVIDIA/NeMo/main/examples/speaker_tasks/diarization/conf/inference/{CONFIG_FILE_NAME}"
-    MODEL_CONFIG = os.path.join(output_dir, CONFIG_FILE_NAME)
-    if not os.path.exists(MODEL_CONFIG):
-        MODEL_CONFIG = wget.download(CONFIG_URL, output_dir)
+# def create_diarizer_config(output_dir, vad_model_path, speaker_model_path):
+#     # Load YAML Diarizer Configuration
+#     DOMAIN_TYPE = "telephonic"
+#     CONFIG_FILE_NAME = f"diar_infer_{DOMAIN_TYPE}.yaml"
+#     CONFIG_URL = f"https://raw.githubusercontent.com/NVIDIA/NeMo/main/examples/speaker_tasks/diarization/conf/inference/{CONFIG_FILE_NAME}"
+#     MODEL_CONFIG = os.path.join(output_dir, CONFIG_FILE_NAME)
+#     if not os.path.exists(MODEL_CONFIG):
+#         MODEL_CONFIG = wget.download(CONFIG_URL, output_dir)
 
-    config = OmegaConf.load(MODEL_CONFIG)
-    data_dir = os.path.join(output_dir, "data")
-    os.makedirs(data_dir, exist_ok=True)
+#     config = OmegaConf.load(MODEL_CONFIG)
+#     data_dir = os.path.join(output_dir, "data")
+#     os.makedirs(data_dir, exist_ok=True)
 
-    # Model Paths
-    config.diarizer.speaker_embeddings.model_path = speaker_model_path
-    config.diarizer.vad.model_path = vad_model_path
-    config.diarizer.msdd_model.model_path = "diar_msdd_telephonic"
+#     # Model Paths
+#     config.diarizer.speaker_embeddings.model_path = speaker_model_path
+#     config.diarizer.vad.model_path = vad_model_path
+#     config.diarizer.msdd_model.model_path = "diar_msdd_telephonic"
     
-    return config
+#     return config
 
 models = {}
 
