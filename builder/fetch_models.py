@@ -9,7 +9,7 @@ import signal
 if platform.system() == 'Windows':
     if not hasattr(signal, 'SIGKILL'):
         signal.SIGKILL = signal.SIGTERM  # or SIGINT
-from nemo.collections.asr.models.msdd_models import NeuralDiarizer
+# from nemo.collections.asr.models.msdd_models import NeuralDiarizer
 from deepmultilingualpunctuation import PunctuationModel
 from omegaconf import OmegaConf
 from ctc_forced_aligner import (
