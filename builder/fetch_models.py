@@ -5,10 +5,11 @@ from concurrent.futures import ThreadPoolExecutor
 from faster_whisper import WhisperModel
 import platform
 import signal
+
 # Check if running on Windows and apply a workaround
-if platform.system() == 'Windows':
-    if not hasattr(signal, 'SIGKILL'):
-        signal.SIGKILL = signal.SIGTERM  # or SIGINT
+# if platform.system() == 'Windows':
+#     if not hasattr(signal, 'SIGKILL'):
+#         signal.SIGKILL = signal.SIGTERM  # or SIGINT
 # from nemo.collections.asr.models.msdd_models import NeuralDiarizer
 from deepmultilingualpunctuation import PunctuationModel
 from omegaconf import OmegaConf
