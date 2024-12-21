@@ -1,23 +1,23 @@
 # Use specific version of NVIDIA CUDA image
-FROM nvidia/cuda:11.8.0-cudnn8-devel-ubuntu22.04
+FROM runpod/base:0.4.0-cuda11.8.0
 
-# Remove any third-party apt sources to avoid issues with expiring keys
-RUN rm -f /etc/apt/sources.list.d/*.list
+# # Remove any third-party apt sources to avoid issues with expiring keys
+# RUN rm -f /etc/apt/sources.list.d/*.list
 
 # Set shell and noninteractive environment variables
 SHELL ["/bin/bash", "-c"]
 
-# Set working directory
-WORKDIR /
+# # Set working directory
+# WORKDIR /
 
-# Update and upgrade the system packages
-RUN apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get install --yes --no-install-recommends \
-    sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential gpg && \
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/*
+# # Update and upgrade the system packages
+# RUN apt-get update -y && \
+#     apt-get upgrade -y && \
+#     apt-get install --yes --no-install-recommends \
+#     sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential gpg && \
+#     apt-get autoremove -y && \
+#     apt-get clean -y && \
+#     rm -rf /var/lib/apt/lists/*
 
 # Add the deadsnakes PPA and install Python 3.10
 RUN add-apt-repository ppa:deadsnakes/ppa -y && \
