@@ -16,7 +16,6 @@ WORKDIR /
 RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install --yes --no-install-recommends \
-    apt-get install nvidia-utils-515 \
     sudo ca-certificates git wget curl bash libgl1 libx11-6 software-properties-common ffmpeg build-essential gpg && \
     apt-get autoremove -y && \
     apt-get clean -y && \
